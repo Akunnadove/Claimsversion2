@@ -23,9 +23,7 @@ FEATURE_COLS = ['year', 'month', 'PERSON_NR', 'AGE', 'general_practitioner',
                 'beneficiary_provider_nr', 'treatment_code', 'number_of_treatments', 
                 'claim_amount', 'Unnamed: 28']
 
-# ============================================================================
-# STEP 1: UPLOAD DATA
-# ============================================================================
+
 
 st.sidebar.header("Upload Data")
 upload_option = st.sidebar.radio("Choose input method:", ["Upload CSV", "Manual Entry"])
@@ -79,6 +77,20 @@ else:  # Manual Entry
     df = pd.DataFrame([data_dict])
 
 # ============================================================================
+# ADD PREDICT BUTTON
+# ============================================================================
+
+st.sidebar.markdown("---")
+st.sidebar.subheader("Ready to Predict?")
+predict_button = st.sidebar.button("🎯 Make Predictions", use_container_width=True, type="primary")
+
+if not predict_button:
+    st.info("👆 Click the **'Make Predictions'** button above to classify the data")
+    st.stop()
+
+st.success("✓ Predictions generated!", icon="✅")
+
+# ============================================================================
 # STEP 2: CALCULATE FLAGS
 # ============================================================================
 
@@ -130,7 +142,6 @@ X = X.fillna(X.mean())
 
 # Make predictions
 df["predicted_class"] = model.predict(X)
-df["prediction_confidence"] = model.predict_proba(X).max(axis=1)
 
 # ============================================================================
 # STEP 4: DISPLAY RESULTS
@@ -154,9 +165,7 @@ with tab1:
             
             st.metric(
                 label=f"Record {idx + 1}",
-                value=f"{color} {row.quality_class}",
-                delta=f"Predicted: {row.predicted_class}",
-                delta_color="off"
+                value=f"{color} {row.quality_class}"
             )
 
 with tab2:
@@ -179,12 +188,6 @@ with tab2:
     st.subheader("Classification Distribution")
     class_counts = df["quality_class"].value_counts()
     st.bar_chart(class_counts)
-    
-    # Prediction confidence
-    st.subheader("Prediction Confidence")
-    st.write(f"Average Confidence: {df['prediction_confidence'].mean():.2%}")
-    st.write(f"Min Confidence: {df['prediction_confidence'].min():.2%}")
-    st.write(f"Max Confidence: {df['prediction_confidence'].max():.2%}")
 
 with tab3:
     st.subheader("Flag Analysis")
