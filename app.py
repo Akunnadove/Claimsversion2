@@ -21,7 +21,7 @@ except:
 # ✓ FIXED: Define exact feature names used during training
 FEATURE_COLS = ['year', 'month', 'PERSON_NR', 'AGE', 'general_practitioner', 
                 'beneficiary_provider_nr', 'treatment_code', 'number_of_treatments', 
-                'claim_amount', 'Unnamed: 28']
+                'claim_amount']
 
 
 
