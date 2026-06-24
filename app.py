@@ -168,27 +168,6 @@ with tab1:
             )
 
 with tab2:
-    st.subheader("Summary Statistics")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.metric("Total Records", len(df))
-    
-    with col2:
-        abnormal_count = (df["quality_class"] == "Abnormal").sum()
-        st.metric("Abnormal", abnormal_count, f"{abnormal_count/len(df)*100:.1f}%")
-    
-    with col3:
-        normal_count = (df["quality_class"] == "Normal").sum()
-        st.metric("Normal", normal_count, f"{normal_count/len(df)*100:.1f}%")
-    
-    # Classification distribution chart
-    st.subheader("Classification Distribution")
-    class_counts = df["quality_class"].value_counts()
-    st.bar_chart(class_counts)
-
-with tab3:
     st.subheader("Flag Analysis")
     
     col1, col2, col3, col4 = st.columns(4)
@@ -204,20 +183,3 @@ with tab3:
     
     with col4:
         st.metric("Outlier Flags", df['flag_outlier'].sum())
-    
-    st.subheader("Flag Details by Record")
-    flag_df = df[['POLICY_NR', 'flag_age', 'flag_dup', 'flag_date', 'flag_outlier', 'num_flags', 'quality_class', 'predicted_class']].copy()
-    st.dataframe(flag_df, use_container_width=True)
-
-with tab4:
-    st.subheader("Full Dataset")
-    st.dataframe(df, use_container_width=True)
-    
-    # Download button
-    csv = df.to_csv(index=False)
-    st.download_button(
-        label="Download Results as CSV",
-        data=csv,
-        file_name="classification_results.csv",
-        mime="text/csv"
-    )
