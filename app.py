@@ -70,8 +70,7 @@ else:  # Manual Entry
         'audit_date': st.sidebar.date_input("Audit Date", datetime.now()),
         'tariff_code': st.sidebar.text_input("Tariff Code", ""),
         'description.1': st.sidebar.text_input("Description (2)", ""),
-        'PAYMENT_ORDER_NR': st.sidebar.text_input("Payment Order Nr", ""),
-        'Unnamed: 28': st.sidebar.number_input("Unnamed: 28", value=0),  # Added this column
+        'PAYMENT_ORDER_NR': st.sidebar.text_input("Payment Order Nr", "")
     }
     
     df = pd.DataFrame([data_dict])
