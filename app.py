@@ -222,38 +222,3 @@ with tab4:
         file_name="classification_results.csv",
         mime="text/csv"
     )
-
-# ============================================================================
-# STEP 5: CONDITION EXPLANATIONS
-# ============================================================================
-
-st.markdown("---")
-st.subheader("📋 Classification Conditions")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    with st.expander("🔴 Age Flag", expanded=False):
-        st.write("**Triggered when:** Age < 10 or Age > 75")
-        st.write("Identifies unusual ages that may indicate data entry errors.")
-    
-    with st.expander("🔴 Duplicate Flag", expanded=False):
-        st.write("**Triggered when:** Exact duplicate rows found")
-        st.write("Identifies duplicate records that inflate metrics.")
-    
-with col2:
-    with st.expander("🔴 Date Logic Flag", expanded=False):
-        st.write("**Triggered when:** Payment Date < Claim Date")
-        st.write("Identifies logically impossible date sequences.")
-    
-    with st.expander("🔴 Outlier Flag", expanded=False):
-        st.write("**Triggered when:** Claim Amount outside IQR bounds")
-        st.write(f"Current bounds: [{lower_bound:.2f}, {upper_bound:.2f}]")
-        st.write("Identifies statistical outliers using IQR method (1.5 × IQR).")
-
-st.markdown("---")
-st.markdown("""
-**Classification Legend:**
-- 🟢 **Normal**: No flags triggered (0 conditions)
-- 🟠 **Abnormal**: 1+ flags triggered (some conditions)
-""")
