@@ -13,7 +13,7 @@ st.markdown("Classify insurance claims into Priority, Abnormal, or Normal catego
 
 # Load the trained model
 try:
-    model = joblib.load('classification_model.pkl')  # ✓ FIXED: Use joblib
+    model = joblib.load('classification_model.pkl') 
 except:
     st.error("Model file not found. Please train the model first using classification_model.py")
     st.stop()
@@ -87,7 +87,7 @@ predict_button = st.sidebar.button("Make Predictions", use_container_width=True,
 if not predict_button:
     st.stop()
 
-st.success("✓ Predictions generated!")
+st.success("Predictions generated!")
 
 # ============================================================================
 # STEP 2: CALCULATE FLAGS
