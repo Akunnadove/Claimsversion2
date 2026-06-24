@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(page_title="Data Quality Classification", layout="wide")
 
 # Title
-st.title("📊 Data Quality Classification System")
+st.title("Data Quality Classification System")
 st.markdown("Classify insurance claims into Priority, Abnormal, or Normal categories")
 
 # Load the trained model
@@ -82,13 +82,12 @@ else:  # Manual Entry
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Ready to Predict?")
-predict_button = st.sidebar.button("🎯 Make Predictions", use_container_width=True, type="primary")
+predict_button = st.sidebar.button("Make Predictions", use_container_width=True, type="primary")
 
 if not predict_button:
-    st.info("👆 Click the **'Make Predictions'** button above to classify the data")
     st.stop()
 
-st.success("✓ Predictions generated!", icon="✅")
+st.success("✓ Predictions generated!")
 
 # ============================================================================
 # STEP 2: CALCULATE FLAGS
