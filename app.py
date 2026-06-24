@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
+import joblib  # ✓ FIXED: Use joblib instead of pickle
 from datetime import datetime
 
 # Page config
@@ -13,10 +13,15 @@ st.markdown("Classify insurance claims into Priority, Abnormal, or Normal catego
 
 # Load the trained model
 try:
-    model = pickle.load(open('classification_model.pkl', 'rb'))
+    model = joblib.load('classification_model.pkl')  # ✓ FIXED: Use joblib
 except:
     st.error("Model file not found. Please train the model first using classification_model.py")
     st.stop()
+
+# ✓ FIXED: Define exact feature names used during training
+FEATURE_COLS = ['year', 'month', 'PERSON_NR', 'AGE', 'general_practitioner', 
+                'beneficiary_provider_nr', 'treatment_code', 'number_of_treatments', 
+                'claim_amount', 'Unnamed: 28']
 
 # ============================================================================
 # STEP 1: UPLOAD DATA
@@ -44,19 +49,19 @@ else:  # Manual Entry
         'month': st.sidebar.number_input("Month", min_value=1, max_value=12, value=1),
         'guarantee_declaration_nr': st.sidebar.text_input("Guarantee Declaration Nr", ""),
         'POLICY_NR': st.sidebar.text_input("Policy Number", ""),
-        'PERSON_NR': st.sidebar.text_input("Person Number", ""),
+        'PERSON_NR': st.sidebar.number_input("Person Number", value=0),  # Changed to number
         'INSURED_NR': st.sidebar.text_input("Insured Number", ""),
         'GENDER': st.sidebar.selectbox("Gender", ["M", "F", "Other"]),
         'AGE': st.sidebar.number_input("Age", min_value=0, max_value=120, value=40),
-        'general_practitioner': st.sidebar.text_input("General Practitioner", ""),
+        'general_practitioner': st.sidebar.number_input("General Practitioner", value=0),  # Changed to number
         'pzs_doctor_last_name': st.sidebar.text_input("PZS Doctor Last Name", ""),
         'pzs_doctor_first_name': st.sidebar.text_input("PZS Doctor First Name", ""),
-        'beneficiary_provider_nr': st.sidebar.text_input("Beneficiary Provider Nr", ""),
+        'beneficiary_provider_nr': st.sidebar.number_input("Beneficiary Provider Nr", value=0),  # Changed to number
         'provider_type': st.sidebar.text_input("Provider Type", ""),
         'description': st.sidebar.text_input("Description", ""),
         'beneficiary_provider_last_name': st.sidebar.text_input("Beneficiary Last Name", ""),
         'beneficiary_provider_first_name': st.sidebar.text_input("Beneficiary First Name", ""),
-        'treatment_code': st.sidebar.text_input("Treatment Code", ""),
+        'treatment_code': st.sidebar.number_input("Treatment Code", value=0),  # Changed to number
         'treatment_description': st.sidebar.text_input("Treatment Description", ""),
         'number_of_treatments': st.sidebar.number_input("Number of Treatments", min_value=0, value=1),
         'claim_date': st.sidebar.date_input("Claim Date", datetime.now()),
@@ -68,6 +73,7 @@ else:  # Manual Entry
         'tariff_code': st.sidebar.text_input("Tariff Code", ""),
         'description.1': st.sidebar.text_input("Description (2)", ""),
         'PAYMENT_ORDER_NR': st.sidebar.text_input("Payment Order Nr", ""),
+        'Unnamed: 28': st.sidebar.number_input("Unnamed: 28", value=0),  # Added this column
     }
     
     df = pd.DataFrame([data_dict])
@@ -111,19 +117,15 @@ df['flag_outlier'] = (df["claim_amount"] < lower_bound) | (df["claim_amount"] > 
 # Count flags
 df['num_flags'] = df['flag_age'].astype(int) + df['flag_dup'].astype(int) + df['flag_date'].astype(int) + df['flag_outlier'].astype(int)
 
-# Classify
-df["quality_class"] = np.where(df['num_flags'] == 4, "Priority", 
-                    np.where(df['num_flags'] > 0, "Abnormal", "Normal"))
+# ✓ FIXED: Only create classes that model was trained on (Normal, Abnormal)
+df["quality_class"] = np.where(df['num_flags'] > 0, "Abnormal", "Normal")
 
 # ============================================================================
 # STEP 3: PREDICT WITH MODEL
 # ============================================================================
 
-# Prepare features for model (same columns used during training)
-numeric_cols = [col for col in df.columns if df[col].dtype in ['int64', 'float64'] 
-                and col not in ['quality_class', 'num_flags']]
-
-X = df[numeric_cols].copy()
+# ✓ FIXED: Use exact feature columns from training
+X = df[FEATURE_COLS].copy()
 X = X.fillna(X.mean())
 
 # Make predictions
@@ -145,9 +147,7 @@ with tab1:
     for idx, (col, row) in enumerate(zip(cols, df.itertuples())):
         with col:
             # Color based on classification
-            if row.quality_class == "Priority":
-                color = "🔴"
-            elif row.quality_class == "Abnormal":
+            if row.quality_class == "Abnormal":
                 color = "🟠"
             else:
                 color = "🟢"
@@ -162,20 +162,16 @@ with tab1:
 with tab2:
     st.subheader("Summary Statistics")
     
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         st.metric("Total Records", len(df))
     
     with col2:
-        priority_count = (df["quality_class"] == "Priority").sum()
-        st.metric("Priority", priority_count, f"{priority_count/len(df)*100:.1f}%")
-    
-    with col3:
         abnormal_count = (df["quality_class"] == "Abnormal").sum()
         st.metric("Abnormal", abnormal_count, f"{abnormal_count/len(df)*100:.1f}%")
     
-    with col4:
+    with col3:
         normal_count = (df["quality_class"] == "Normal").sum()
         st.metric("Normal", normal_count, f"{normal_count/len(df)*100:.1f}%")
     
@@ -256,6 +252,5 @@ st.markdown("---")
 st.markdown("""
 **Classification Legend:**
 - 🟢 **Normal**: No flags triggered (0 conditions)
-- 🟠 **Abnormal**: 1-3 flags triggered (some conditions)
-- 🔴 **Priority**: All 4 flags triggered (all conditions)
+- 🟠 **Abnormal**: 1+ flags triggered (some conditions)
 """)
