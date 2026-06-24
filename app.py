@@ -147,7 +147,7 @@ df["predicted_class"] = model.predict(X)
 # ============================================================================
 
 # Create tabs
-tab1, tab2, tab3, tab4 = st.tabs(["Classification", "Details", "Flags", "Data"])
+tab1, tab2, tab3, tab4 = st.tabs(["Classification", "Flags"])
 
 with tab1:
     st.subheader("Classification Results")
