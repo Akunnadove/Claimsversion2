@@ -1,0 +1,88 @@
+# requirements.txt
+streamlit==1.28.1
+pandas==2.0.3
+numpy==1.24.3
+scikit-learn==1.3.0
+pickle-mixin==1.0.0
+
+
+# ============================================================================
+# INSTALLATION & RUNNING INSTRUCTIONS
+# ============================================================================
+
+SETUP:
+------
+
+1. Install requirements:
+   pip install -r requirements.txt
+
+2. Make sure you have:
+   - classification_model.pkl (trained model from classification_model.py)
+   - app.py (this Streamlit app)
+
+3. Run the app:
+   streamlit run app.py
+
+4. Open browser:
+   http://localhost:8501
+
+
+FEATURES:
+---------
+
+✓ Upload CSV files or enter data manually
+✓ Automatic classification using 4 conditions
+✓ ML model predictions with confidence scores
+✓ Classification distribution charts
+✓ Flag analysis and details
+✓ Full dataset view with download option
+✓ Condition explanations
+
+
+USAGE:
+------
+
+Option 1: Upload CSV
+- Go to Sidebar → Upload Data → Upload CSV
+- Select your CSV file with the claim data
+- Results appear automatically
+
+Option 2: Manual Entry
+- Go to Sidebar → Choose "Manual Entry"
+- Fill in the form fields
+- Results appear in real-time
+
+
+DEPLOYMENT OPTIONS:
+-------------------
+
+Option 1: Streamlit Cloud (Easiest)
+- Push code to GitHub
+- Connect GitHub repo to Streamlit Cloud
+- App runs automatically at streamlit.app URL
+- Free tier available
+
+Option 2: Docker
+- Create Dockerfile
+- Deploy to any cloud (AWS, GCP, Azure, Heroku)
+
+Option 3: Local Server
+- Run on your machine with streamlit run app.py
+- Share via localhost for local testing
+
+Option 4: Heroku/PythonAnywhere
+- Requires Procfile configuration
+- See Streamlit deployment docs
+
+
+TROUBLESHOOTING:
+----------------
+
+Error: "Model file not found"
+→ Make sure classification_model.pkl is in the same directory as app.py
+
+Error: "Missing columns"
+→ Ensure your CSV has all required columns (see column list)
+
+Error: "Streamlit not installed"
+→ Run: pip install -r requirements.txt
